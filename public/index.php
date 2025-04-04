@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
-use Models\ElectricVehicle;
+use App\Controllers\ElectricVehicleController;
+use App\Repositories\ElectricVehicleRepository;
 
 require "../vendor/autoload.php";
 require "../bootstrap.php";
@@ -20,14 +21,9 @@ if ($endpoint !== "electric-vehicules") {
   exit;
 }
 
-$someVehicles = ElectricVehicle::select(
-  "VIN",
-  "Make",
-  "Model",
-  "Model_Year",
-  "Electric_Vehicle_Type",
-  "CAFV_Eligibility"
-)->offset(0)->limit(10)->get();
+$electricVehicleRepository = new ElectricVehicleRepository();
 
-// echo json_encode(["message" => "Manuel, keep going. You are doing great!"]);
-echo json_encode(["message" => $someVehicles]);
+$requestMethod = $_SERVER['REQUEST_METHOD'];
+$id = $parts[2] ?? null;
+
+(new ElectricVehicleController($electricVehicleRepository))->processRequest($requestMethod, $id);
