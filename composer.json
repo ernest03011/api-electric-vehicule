@@ -2,8 +2,7 @@
   "name": "manue/api-electric-vehicule",
   "autoload": {
     "psr-4": {
-      "App\\": "src/",
-      "Models\\": "Models/"
+      "App\\": "src/"
     }
   },
   "authors": [
