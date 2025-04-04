@@ -10,7 +10,7 @@ $dotenv->load();
 $capsule = new Capsule;
 $capsule->addConnection([
   "driver" => $_ENV['DB_DRIVER'] ?? "mysql",
-  "host" => $_ENV['DB_DRIVER'] ?? "localhost",
+  "host" => $_ENV['DB_HOST'] ?? "localhost",
   "database" => $_ENV['DB_NAME'] ?? "",
   "username" => $_ENV['DB_USERNAME'] ?? "root",
   "password" => $_ENV['DB_PASSWORD'] ?? "",
