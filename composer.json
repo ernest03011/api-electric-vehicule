@@ -11,5 +11,7 @@
       "email": "manuel.ernestodjs@gmail.com"
     }
   ],
-  "require": {}
+  "require": {
+    "illuminate/database": "^12.7"
+  }
 }
