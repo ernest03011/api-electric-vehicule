@@ -1,0 +1,15 @@
+{
+  "name": "manue/api-electric-vehicule",
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Manuel De Jesus",
+      "email": "manuel.ernestodjs@gmail.com"
+    }
+  ],
+  "require": {}
+}
