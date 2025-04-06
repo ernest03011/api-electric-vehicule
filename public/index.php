@@ -16,8 +16,8 @@ $parts = explode("/", $_SERVER["REQUEST_URI"]);
 
 $endpoint = $parts[1];
 
-if ($endpoint !== "electric-vehicules") {
-  HttpMessageService::Response(
+if ($endpoint !== "electric-vehicles") {
+  HttpMessageService::response(
     ["message" => "Path not found"],
     404
   );
