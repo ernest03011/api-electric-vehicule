@@ -6,6 +6,7 @@ namespace App;
 
 use App\Controllers\ElectricVehicleController;
 use App\Repositories\ElectricVehicleRepository;
+use App\Services\HttpMessageService;
 
 require "../vendor/autoload.php";
 require "../bootstrap.php";
@@ -16,8 +17,10 @@ $parts = explode("/", $_SERVER["REQUEST_URI"]);
 $endpoint = $parts[1];
 
 if ($endpoint !== "electric-vehicules") {
-  http_response_code(404);
-  echo json_encode(["message" => "Path not found"]);
+  HttpMessageService::Response(
+    ["message" => "Path not found"],
+    404
+  );
   exit;
 }
 
