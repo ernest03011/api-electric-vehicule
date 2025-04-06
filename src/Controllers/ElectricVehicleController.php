@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Repositories\ElectricVehicleRepository;
+use App\Services\HttpMessageService;
 
 class ElectricVehicleController
 {
@@ -17,11 +18,12 @@ class ElectricVehicleController
 
     if ($vin) {
       $response = $this->processResourceRequest($requestMethod, $vin);
-      echo json_encode(["message" => $response]);
+      HttpMessageService::response(["message" => $response]);
       return;
     } else {
       $response = $this->processCollectionRequest($requestMethod);
-      echo json_encode(["message" => $response]);
+      HttpMessageService::response(["message" => $response]);
+      return;
     }
   }
 
@@ -39,6 +41,14 @@ class ElectricVehicleController
       'get' => $this->electricVehicleRepository->find($vin),
       'delete' => $this->electricVehicleRepository->delete($vin),
       'patch' => $this->electricVehicleRepository->update($vin, $data),
+      default => (function () {
+        HttpMessageService::response(
+          ["message" => "testing"],
+          405,
+          "Allow: GET, PATCH, DELETE"
+        );
+        exit;
+      })(),
     };
   }
 
@@ -53,6 +63,14 @@ class ElectricVehicleController
     return match ($requestMethod) {
       'get' => $this->electricVehicleRepository->findAll(),
       'post' => $this->electricVehicleRepository->create($data),
+      default => (function () {
+        HttpMessageService::Response(
+          ["message" => "testing2"],
+          405,
+          "Allow: GET, POST"
+        );
+        exit;
+      })(),
     };
   }
 }
