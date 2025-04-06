@@ -9,6 +9,10 @@ use App\Services\HttpMessageService;
 
 class ElectricVehicleController
 {
+  private int $httpResponseCode = 200;
+  private string $httpResponseHeader = "";
+  private array $httpResponseMessage = [];
+
   public function __construct(
     protected ElectricVehicleRepository $electricVehicleRepository
   ) {}
@@ -17,14 +21,17 @@ class ElectricVehicleController
   {
 
     if ($vin) {
-      $response = $this->processResourceRequest($requestMethod, $vin);
-      HttpMessageService::response(["message" => $response]);
-      return;
+      $this->processResourceRequest($requestMethod, $vin);
     } else {
-      $response = $this->processCollectionRequest($requestMethod);
-      HttpMessageService::response(["message" => $response]);
-      return;
+      $this->processCollectionRequest($requestMethod);
     }
+
+    HttpMessageService::response(
+      $this->httpResponseMessage,
+      $this->httpResponseCode,
+      $this->httpResponseHeader
+    );
+    exit;
   }
 
   public function processResourceRequest(string $requestMethod, ?string $vin)
@@ -40,17 +47,39 @@ class ElectricVehicleController
         ["message" => "Vehicle with this VIN {$vin} was not found"],
         404,
       );
-      exit;
+      return;
     }
 
     if ($requestMethod === "patch") {
       $data = (array) json_decode(file_get_contents("php://input"), true);
     }
 
-    return match ($requestMethod) {
-      'get' => $vehicle,
-      'delete' => $this->electricVehicleRepository->delete($vin),
-      'patch' => $this->electricVehicleRepository->update($vin, $data),
+    match ($requestMethod) {
+      'get' => (function () use ($vehicle) {
+        $this->httpResponseMessage = ["message" => $vehicle];
+      })(),
+      'delete' => (function () use ($vin) {
+        $response = $this->electricVehicleRepository->delete($vin);
+
+        if (! $response) {
+          $this->httpResponseCode = 500;
+          $this->httpResponseMessage = ["message" => "Something went wrong, try again!"];
+          return;
+        }
+
+        $this->httpResponseMessage = ["message" => "Vehicle with Vin number {$vin} has been deleted"];
+      })(),
+      'patch' => (function () use ($vin, $data) {
+        $response = $this->electricVehicleRepository->update($vin, $data);
+
+        if (! $response) {
+          $this->httpResponseCode = 500;
+          $this->httpResponseMessage = ["message" => "Something went wrong, try again!"];
+          return;
+        }
+
+        $this->httpResponseMessage = ["message" => "Vehicle with Vin number {$vin} has been updated"];
+      })(),
       default => (function () {
         HttpMessageService::response(
           ["message" => "testing"],
@@ -70,9 +99,30 @@ class ElectricVehicleController
       $data = (array) json_decode(file_get_contents("php://input"), true);
     }
 
-    return match ($requestMethod) {
-      'get' => $this->electricVehicleRepository->findAll(),
-      'post' => $this->electricVehicleRepository->create($data),
+    match ($requestMethod) {
+      'get' => (function () {
+        $response = $this->electricVehicleRepository->findAll();
+
+        if (! $response) {
+          $this->httpResponseCode = 500;
+          $this->httpResponseMessage = ["message" => "Something went wrong, try again!"];
+          return;
+        }
+
+        $this->httpResponseMessage = ["message" => $response];
+      })(),
+      'post' => (function () use ($data) {
+        $vin = $this->electricVehicleRepository->create($data);
+
+        if (! $vin) {
+          $this->httpResponseCode = 500;
+          $this->httpResponseMessage = ["message" => "Something went wrong, try again!"];
+          return;
+        }
+
+        $this->httpResponseCode = 201;
+        $this->httpResponseMessage = ["message" => "Vehicle with Vin number {$vin} has been created"];
+      })(),
       default => (function () {
         HttpMessageService::Response(
           ["message" => "testing2"],
