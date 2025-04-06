@@ -33,12 +33,22 @@ class ElectricVehicleController
     $vin = strtoupper($vin);
     $requestMethod = strtolower($requestMethod);
 
+    $vehicle = $this->electricVehicleRepository->find($vin);
+
+    if (count($vehicle) <= 0) {
+      HttpMessageService::response(
+        ["message" => "Vehicle with this VIN {$vin} was not found"],
+        404,
+      );
+      exit;
+    }
+
     if ($requestMethod === "patch") {
       $data = (array) json_decode(file_get_contents("php://input"), true);
     }
 
     return match ($requestMethod) {
-      'get' => $this->electricVehicleRepository->find($vin),
+      'get' => $vehicle,
       'delete' => $this->electricVehicleRepository->delete($vin),
       'patch' => $this->electricVehicleRepository->update($vin, $data),
       default => (function () {
