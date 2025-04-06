@@ -10,4 +10,8 @@ class ElectricVehicle extends Model
 {
 
   protected $table = "electric_vehicle_population_data";
+
+  protected $keyType = 'string';
+
+  protected $primaryKey = 'VIN';
 }
