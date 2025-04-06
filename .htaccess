@@ -1,0 +1,5 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^localhost:8080$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^localhost:8080$
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule (.*) /public/$1 [L]
