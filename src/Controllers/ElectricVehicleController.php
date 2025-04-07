@@ -93,7 +93,7 @@ class ElectricVehicleController
       })(),
       default => (function () {
         HttpMessageService::response(
-          ["message" => "testing"],
+          [],
           405,
           "Allow: GET, PATCH, DELETE"
         );
@@ -136,7 +136,7 @@ class ElectricVehicleController
       })(),
       default => (function () {
         HttpMessageService::Response(
-          ["message" => "testing2"],
+          [],
           405,
           "Allow: GET, POST"
         );
