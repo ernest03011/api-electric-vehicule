@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 class ElectricVehicle extends Model
 {
 
-  protected $table = "electric_vehicle_population_data";
+    protected $table = "electric_vehicle_population_data";
 
-  protected $keyType = 'string';
+    protected $keyType = 'string';
 
-  protected $primaryKey = 'VIN';
+    protected $primaryKey = 'VIN';
 
-  public $incrementing = false;
+    public $incrementing = false;
 
-  protected $fillable = [
+    protected $fillable = [
     'VIN',
     'County',
     'City',
@@ -35,7 +35,7 @@ class ElectricVehicle extends Model
     'Vehicle_Location',
     'Electric_Utility',
     'Census_Tract'
-  ];
+    ];
 
-  public $timestamps = false;
+    public $timestamps = false;
 }
