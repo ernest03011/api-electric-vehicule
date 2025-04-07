@@ -18,7 +18,7 @@ class ElectricVehicleController
     ) {
     }
 
-    public function processRequest(string $requestMethod, ?string $vin)
+    public function processRequest(string $requestMethod, ?string $vin): void
     {
 
         if ($vin) {
@@ -35,7 +35,7 @@ class ElectricVehicleController
         exit;
     }
 
-    public function processResourceRequest(string $requestMethod, ?string $vin)
+    public function processResourceRequest(string $requestMethod, string $vin): void
     {
 
         $vin = strtoupper($vin);
@@ -107,7 +107,7 @@ class ElectricVehicleController
         };
     }
 
-    public function processCollectionRequest(string $requestMethod)
+    public function processCollectionRequest(string $requestMethod): void
     {
         $requestMethod = strtolower($requestMethod);
 
@@ -153,7 +153,7 @@ class ElectricVehicleController
         };
     }
 
-    private function getValidationErrors(array $data, ?bool $isItNew = true)
+    private function getValidationErrors(array $data, ?bool $isItNew = true): array
     {
         $updateArrayExample = [
         'Make' => 'testing34',
@@ -197,7 +197,7 @@ class ElectricVehicleController
                 $errors[] = "Data is incorrect";
             }
 
-            return;
+            return $errors;
         }
 
         if (! $isItNew) {
