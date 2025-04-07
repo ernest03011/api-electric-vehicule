@@ -52,6 +52,17 @@ class ElectricVehicleController
 
     if ($requestMethod === "patch") {
       $data = (array) json_decode(file_get_contents("php://input"), true);
+
+      $errors = $this->getValidationErrors($data, false);
+
+      if (! empty($errors)) {
+        HttpMessageService::response(
+          ["errors" => $errors],
+          422,
+          ""
+        );
+        exit;
+      }
     }
 
     match ($requestMethod) {
@@ -132,5 +143,65 @@ class ElectricVehicleController
         exit;
       })(),
     };
+  }
+
+  private function getValidationErrors(array $data, ?bool $isItNew = true)
+  {
+    $updateArrayExample = [
+      'Make' => 'testing34',
+      'Model' => 'testing34',
+      'Model_Year' => 2021,
+      'Electric_Vehicle_Type' => 'testing34',
+      'CAFV_Eligibility' => 'testing34',
+    ];
+
+    $newArrayExample = [
+      "VIN" => "1G1FZ6S05L4109876",
+      "County" => "Spokane",
+      "City" => "Spokane",
+      "State" => "WA",
+      "Postal_Code" => "99201",
+      "Model_Year" => 2021,
+      "Make" => "Chevrolet",
+      "Model" => "Bolt EV",
+      "Electric_Vehicle_Type" => "Battery Electric Vehicle (BEV)",
+      "CAFV_Eligibility" => "Eligible",
+      "Electric_Range" => 259,
+      "Base_MSRP" => 36620,
+      "Legislative_District" => 3,
+      "DOL_Vehicle_ID" => 567891234,
+      "Vehicle_Location" => "47.6588,-117.4260",
+      "Electric_Utility" => "Avista",
+      "Census_Tract" => "53063001500"
+    ];
+
+    $errors = [];
+
+    $keysFromInputData = array_keys($data);
+    sort($keysFromInputData);
+
+
+    if ($isItNew) {
+      $keysFromNewArrayExample = array_keys($newArrayExample);
+      sort($keysFromNewArrayExample);
+
+      if ($keysFromInputData !== $keysFromNewArrayExample) {
+        $errors[] = "Data is incorrect";
+      }
+
+      return;
+    }
+
+    if (! $isItNew) {
+      $keysFromUpdateArrayExample = array_keys($updateArrayExample);
+      sort($keysFromUpdateArrayExample);
+
+
+      if ($keysFromInputData !== $keysFromUpdateArrayExample) {
+        $errors[] = "Data is incorrect";
+      }
+
+      return $errors;
+    }
   }
 }
